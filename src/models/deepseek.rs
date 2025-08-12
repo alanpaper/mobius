@@ -6,7 +6,7 @@ use std::error::Error;
 use std::fmt;
 
 
-use crate::{markdown::parser::FileParser, session::{manager::SessionManager, message::Message}};
+use crate::{session::{manager::SessionManager, message::Message}};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct EventSteamDataChoice {
