@@ -1,0 +1,32 @@
+[package]
+name = "mobius"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+reqwest = { version = "0.12.12", features = ["json", "stream"] }
+tokio = { version = "1.43.0", features = ["full"] }
+clap = { version = "4.5.43", features = ["derive"] }
+serde_json = "1.0.142"
+regex = "1.10.4"
+anyhow = "1.0.98"
+inquire = "0.7.4"
+dirs = "6.0.0"
+lazy_static = "1.5.0"
+futures = "0.3.31"
+crossterm = "0.29.0"
+unicode-width = "0.2.1"
+
+[dependencies.chrono]
+features = ["serde"]
+version = "0.4.41"
+
+[dependencies.uuid]
+version = "1.17.0"
+features = [
+    "v4",
+]
+
+[dependencies.serde]
+features = ["derive"]
+version = "1.0"

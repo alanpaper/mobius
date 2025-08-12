@@ -1,0 +1,50 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'  # 当推送 v 开头的标签时触发
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest  # 使用 Windows 环境
+    permissions:
+      contents: write  # 确保有发布权限
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取所有 Git 历史记录和标签
+
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-pc-windows-msvc  # 明确指定 Windows 目标平台（可选）
+
+      - name: Build Release version
+        run: cargo build --release
+
+      - name: Extract version from tag
+        id: version
+        shell: pwsh  # 明确使用 PowerShell
+        run: |
+          # 去除标签中的 'v' 前缀 (PowerShell 语法)
+          $version = $env:GITHUB_REF -replace 'refs/tags/v',''
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Rename executable with version
+        shell: pwsh  # 明确使用 PowerShell
+        run: |
+          # 重命名文件以包含版本号
+          Copy-Item -Path "target/release/mobius.exe" -Destination "target/release/mobius-v${{ steps.version.outputs.version }}.exe"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: build ${{ github.ref_name }}
+          files: |
+            target/release/mobius-v${{ steps.version.outputs.version }}.exe
